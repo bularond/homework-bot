@@ -36,7 +36,6 @@ class HW:
         self.file = None
         self.name = None
         self.data = []
-        print(list(self.synonyms.values()))
     
     def open(self, name):
         if(self.synonyms.get(name) != None):
