@@ -1,5 +1,6 @@
+import psycopg2
+
 class HW:
-    
     def __init__(self):
         self.synonyms = {
             "матика": "алгебра",
@@ -32,44 +33,27 @@ class HW:
             "хим": "химия",
             "химия": "химия",
             "био": "биология",
-            "биология": "биология"}
-        self.file = None
-        self.name = None
-        self.data = []
-    
-    def open(self, name):
-        if(self.synonyms.get(name) != None):
-            self.file = open(self.synonyms[name] + ".txt")
-            self.name = self.synonyms[name]
-            for line in self.file:
-                self.data.append(line)
-            return True
-        else:
-            return False
-    
-    def close(self):
-        if(self.file != None):
-            self.file.close()
-            self.file = open(self.name + ".txt", 'w')
-            for line in self.data:
-                self.file.write(line)
-            self.file.close()
-            self.file = None
-            self.name = None
-            self.data.clear()
+            "биология": "биология"
+        }
+        atributs = {
+            "dbname=de029o1b0fpu7",
+            "user=jowuxhiwbdxgak",
+            "password=2075b275d79b4855354aadef07bba11a62faa2ec49e911bcfe2d2a568284bb95",
+            "host=ec2-54-247-70-127.eu-west-1.compute.amazonaws.com",
+            "port=5432"
+        }
+        self.conn = psycopg2.connect(' '.join(atributs))
+        self.cur = self.conn.cursor()
 
-    def add(self, new_data):
-        while(len(self.data) >= 10):
-            self.data.pop()
-        self.data.insert(0, new_data + '\n')
-    
-    def get(self, count = None):
-        if(len(self.data)):
-            if(count == None):
-                return self.data
-            elif(count == 1):
-                return self.data[0]
-            else:
-                return self.data[:min(count, len(self.data))]
-        else:
-            return []
+    def add(self, lesson, messegeid):
+        self.cur.execute(f"INSERT INTO homework (date, lesson, messageid) \
+            VALUES (current_date, '{lesson}', {messegeid});")
+        self.conn.commit()
+
+    def get(self, lesson, count = None):
+        if count == None:
+            count = 1
+        self.cur.execute(f"SELECT messageid FROM homework WHERE lesson = '{lesson}' \
+            LIMIT {count}")
+        rows = self.cur.fetchall()
+        return list(map(lambda a: a[0], rows))
