@@ -1,3 +1,2 @@
 vk_api
-pytz
-bs4
+py-postgresql
