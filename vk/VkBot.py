@@ -5,19 +5,25 @@ class VkBot:
         self.message_id = message_id
         self.hw = hw
     
-    def new_message(self, message):
-        message = sum(map(lambda a: a.split(), message.split('\n')))
+    def new_message(self, inp):
+        message = []
+        for i in map(lambda a: a.split(), inp.split('\n')):
+            message += i
         out = []
         if(message[0].lower() == "запрос"):
             message = message[1:]
             for lesson in message:
                 if(self.hw.check(lesson)):
-                    out.append(["", self.hw.get(lesson, 3)])
+                    data = self.hw.get(lesson, 3)
+                    if(len(data)):
+                        out.append(["", data])
+                    else:
+                        out.append([f"Задания по предмету {lesson} не найдено", []])
                 else:
                     out.append([f"Урок {lesson.lower()} не найден", []])
         elif(self.hw.check(message[0].lower())):
             self.hw.add(message[0].lower(), self.message_id)
-            out = ["Успешно добавлено", []]
+            out.append(["Успешно добавлено", []])
         else:
             out.append([f"Урок {message[0].lower()} не найден", []])
         return out

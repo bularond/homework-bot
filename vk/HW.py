@@ -45,7 +45,17 @@ class HW:
         self.conn = psycopg2.connect(' '.join(atributs))
         self.cur = self.conn.cursor()
 
+        self.cur.execute("DELETE FROM homework WHERE date < (CURRENT_DATE - 30);")
+        self.conn.commit()
+
+    def check(self, lesson):
+        if(list(self.synonyms.values()).count(lesson)):
+            return True
+        else:
+            return False
+
     def add(self, lesson, messegeid):
+        lesson = self.synonyms[lesson]
         self.cur.execute(f"INSERT INTO homework (date, lesson, messageid) \
             VALUES (current_date, '{lesson}', {messegeid});")
         self.conn.commit()
@@ -54,6 +64,7 @@ class HW:
         if count == None:
             count = 1
         self.cur.execute(f"SELECT messageid FROM homework WHERE lesson = '{lesson}' \
+            ORDER by date DESC \
             LIMIT {count}")
         rows = self.cur.fetchall()
         return list(map(lambda a: a[0], rows))
