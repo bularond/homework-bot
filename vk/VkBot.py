@@ -21,6 +21,8 @@ class VkBot:
                         out.append([f"Задания по предмету {lesson} не найдено", []])
                 else:
                     out.append([f"Урок {lesson.lower()} не найден", []])
+        elif(message[0].lower() == "оповещение"):
+            out.append(["оповещение", [self.message_id]])
         elif(self.hw.check(message[0].lower())):
             self.hw.add(message[0].lower(), self.message_id)
             out.append(["Успешно добавлено", []])

@@ -28,14 +28,16 @@ for event in longpoll.listen():
                 answers = [["Ошибка", []]]
                 print(err)
             for answer in answers:
-                args = {'user_id': event.user_id, 'random_id': random()}
-                if(len(answer[0])):
-                    args['message'] = answer[0]
-                if(len(answer[1])):
-                    for forward_message in answer[1]:
-                        args['forward_messages'] = str(forward_message)
-                        vk.method('messages.send', args)
+                if(answer[0] == "оповещение"):
+                    vk.method('messages.send', {'user_ids': ",".join(map(lambda a: a[:-1], open("userlist.txt").readlines())), 
+                                                'forward_messages': answer[1], 'random_id': random()})
                 else:
-                    vk.method('messages.send', args)
-                print(f'Anwer: {answer[0]}')
-                print(f"Args: {answers}")
+                    args = {'user_id': event.user_id, 'random_id': random()}
+                    if(len(answer[0])):
+                        args['message'] = answer[0]
+                    if(len(answer[1])):
+                        for forward_message in answer[1]:
+                            args['forward_messages'] = str(forward_message)
+                            vk.method('messages.send', args)
+                    else:
+                        vk.method('messages.send', args)
