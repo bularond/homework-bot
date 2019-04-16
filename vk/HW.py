@@ -49,7 +49,7 @@ class HW:
         self.conn.commit()
 
     def check(self, lesson):
-        if(list(self.synonyms.values()).count(lesson)):
+        if(list(self.synonyms.keys()).count(lesson)):
             return True
         else:
             return False
